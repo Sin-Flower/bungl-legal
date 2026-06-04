@@ -66,6 +66,10 @@ footer.site {
   font-size: 13px;
   text-align: center;
 }
+footer.site .biz { line-height: 1.75; }
+footer.site .biz-name { font-weight: 700; color: var(--fg); margin-bottom: 4px; }
+footer.site .biz a { color: inherit; text-decoration: none; }
+footer.site .copy { margin-top: 10px; }
 .cards { display: grid; gap: 14px; margin-top: 24px; }
 .card {
   display: block;
