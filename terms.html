@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>이용약관 — bungl</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header class="site">
+    <a class="brand" href="./">bungl</a>
+    <nav>
+      <a href="privacy.html">개인정보처리방침</a>
+      <a href="terms.html">이용약관</a>
+      <a href="account-deletion.html">계정·데이터 삭제</a>
+    </nav>
+  </header>
+  <main id="content">불러오는 중…</main>
+  <footer class="site">© bungl</footer>
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+  <script>
+    fetch('terms_of_service.md')
+      .then(function (r) { if (!r.ok) throw new Error(r.status); return r.text(); })
+      .then(function (t) { document.getElementById('content').innerHTML = marked.parse(t); })
+      .catch(function () {
+        document.getElementById('content').innerHTML =
+          '<h1>이용약관</h1><p>문서를 불러오지 못했어요. 잠시 후 다시 시도해 주세요.</p>';
+      });
+  </script>
+</body>
+</html>
