@@ -1,0 +1,11 @@
+{
+  "applinks": {
+    "apps": [],
+    "details": [
+      {
+        "appID": "WBTZ88VQ86.com.taesori.bungs",
+        "paths": ["/b/*", "/c/*"]
+      }
+    ]
+  }
+}
