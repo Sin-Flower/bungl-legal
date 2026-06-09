@@ -30,25 +30,29 @@ bungl.org 는 정적 GitHub Pages 라 `/c/`, `/b/` 가 **모든 링크에 같은
 
 ## 최초 1회 셋업
 
-### 1. bungl.org 를 Cloudflare 로 (DNS)
-1. Cloudflare 가입 → **Add a site** `bungl.org` (Free 플랜).
-2. Cloudflare 가 기존 DNS 레코드를 자동 임포트한다. **GitHub Pages 용 apex A
-   레코드 4개**가 그대로 있는지 확인(없으면 추가):
+### 1. apex A 레코드를 Proxied 로 (회색 → 주황)
+bungl.org 는 **이미 Cloudflare 네임서버**(`*.ns.cloudflare.com`)를 쓰고 있어
+네임서버/레지스트라 변경은 필요 없다. 단, GitHub Pages apex A 레코드 4개가 현재
+**DNS only(회색 구름)** 라 트래픽이 Cloudflare 를 안 거친다 → Worker 라우트가
+발동하지 않는다. 다음만 하면 된다:
+
+1. Cloudflare 대시보드 → `bungl.org` → **DNS → Records**.
+2. apex A 레코드 4개를 각각 **Proxied(주황 구름)** 로 토글:
    ```
-   A  bungl.org  185.199.108.153   (Proxied / 주황 구름)
-   A  bungl.org  185.199.109.153   (Proxied)
-   A  bungl.org  185.199.110.153   (Proxied)
-   A  bungl.org  185.199.111.153   (Proxied)
+   A  bungl.org  185.199.108.153   DNS only → Proxied
+   A  bungl.org  185.199.109.153   DNS only → Proxied
+   A  bungl.org  185.199.110.153   DNS only → Proxied
+   A  bungl.org  185.199.111.153   DNS only → Proxied
    ```
-   ⚠️ 네 레코드 모두 **Proxied(주황 구름) 켜기** — Worker 라우트는 프록시된
-   레코드에서만 발동한다.
-3. 도메인 등록업체(레지스트라)에서 **네임서버를 Cloudflare 가 준 값으로 변경**.
-   전파에 보통 수 분~수 시간.
-4. Cloudflare **SSL/TLS → Overview → Full** (Flexible 은 리다이렉트 루프 유발, 금지).
+   (회색=프록시 안 함=Worker 미발동, 주황=엣지 통과=Worker 발동.)
+3. **SSL/TLS → Overview → Full** 로 설정(Flexible 은 리다이렉트 루프 유발, 금지).
    GitHub Pages 는 유효 인증서가 있어 Full / Full(strict) 둘 다 OK.
 
 > GitHub Pages 설정의 커스텀 도메인(`bungl.org`)·Enforce HTTPS 는 그대로 둔다.
 > 인증서는 이미 발급돼 있어 프록시 후에도 동작한다.
+>
+> 확인: `dig +short A bungl.org` 가 Cloudflare IP(104.x / 172.67.x)로 바뀌고
+> `curl -sI https://bungl.org/` 응답에 `cf-ray` 헤더가 생기면 프록시 적용된 것.
 
 ### 2. Worker 배포
 ```bash
