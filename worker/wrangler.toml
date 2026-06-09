@@ -1,0 +1,16 @@
+name = "bungl-share-og"
+main = "worker.js"
+compatibility_date = "2025-01-01"
+workers_dev = false
+
+# /c/* , /b/* 만 Worker 가 처리. 나머지(og.png, share.js, 약관 등)는 GitHub Pages 직빵.
+routes = [
+  { pattern = "bungl.org/c/*", zone_name = "bungl.org" },
+  { pattern = "bungl.org/b/*", zone_name = "bungl.org" },
+]
+
+# publishable(anon) 키는 클라이언트 노출이 전제된 키라 평문 vars 로 둬도 안전.
+# (민감하면 `wrangler secret put SUPABASE_KEY` 로 옮겨도 됨)
+[vars]
+SUPABASE_URL = "https://mmkrlzneakgscbjnyioi.supabase.co"
+SUPABASE_KEY = "sb_publishable_kkgLL6025qIn-8u9xfgkMw_MhM1Hj4q"
