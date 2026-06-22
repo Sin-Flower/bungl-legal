@@ -114,8 +114,11 @@ function renderHtml(meta, type, id) {
       justify-content:center;text-align:center;font-family:-apple-system,BlinkMacSystemFont,
       "Apple SD Gothic Neo","Malgun Gothic","Segoe UI",Roboto,sans-serif;color:var(--fg);background:#fff;padding:24px;}
     img.logo{width:120px;height:120px;border-radius:24px;object-fit:cover;}
-    h1{font-size:20px;margin:20px 0 6px;}
-    p.status{color:var(--muted);font-size:14px;margin:0 0 24px;}
+    .badge{display:inline-block;margin-top:18px;padding:3px 11px;border-radius:999px;
+      background:rgba(245,130,31,.12);color:var(--accent);font-size:12px;font-weight:700;}
+    h1{font-size:21px;margin:10px 0 6px;line-height:1.35;max-width:340px;}
+    p.desc{color:var(--fg);font-size:15px;margin:0 0 20px;max-width:340px;line-height:1.5;opacity:.85;}
+    p.status{color:var(--muted);font-size:13px;margin:0 0 18px;}
     .stores{display:flex;gap:12px;flex-wrap:wrap;justify-content:center;}
     .store{display:inline-block;padding:12px 18px;border-radius:12px;background:var(--accent);
       color:#fff;text-decoration:none;font-weight:700;font-size:14px;}
@@ -125,7 +128,9 @@ function renderHtml(meta, type, id) {
 </head>
 <body>
   <img class="logo" src="${esc(image)}" alt="${SITE_NAME}" onerror="this.onerror=null;this.src='${DEFAULT_OG}'" />
-  <h1>Bungl 앱에서 열기</h1>
+  <span class="badge">${type === 'club' ? '클럽' : '벙'}</span>
+  <h1>${esc(title)}</h1>
+  ${description ? `<p class="desc">${esc(description)}</p>` : ''}
   <p class="status" id="status">앱을 여는 중이에요…</p>
   <div class="stores" id="stores" style="display:none">
     <a class="store" id="play" href="#">Google Play</a>
