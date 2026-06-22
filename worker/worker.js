@@ -89,6 +89,19 @@ function renderHtml(meta, type, id) {
     '관심사로 모이는 소셜 밋업 — 링크를 열어 둘러보세요.';
   const image = meta?.image || DEFAULT_OG;
   const scheme = id ? `bungs://${type}/${id}` : '';
+  // 데스크톱/웹 방문자를 보낼 웹앱 URL(app.bungl.org). 모바일은 앱 스킴 우선.
+  const webUrl = id ? `https://app.bungl.org/?type=${type}&id=${id}` : '';
+
+  // 본문 설명 — 클럽은 표시 안 함(제목 "이름 : 슬로건" 으로 충분).
+  // 벙은 description("일시 · 장소")을 시간/장소 두 줄로 줄바꿈.
+  const isClub = type === 'club';
+  let descHtml = '';
+  if (!isClub) {
+    const parts = description.split(/\s*[·・]\s*/);
+    descHtml = parts.length >= 2
+      ? `<p class="desc">${esc(parts[0])}<br/>${esc(parts.slice(1).join(' · '))}</p>`
+      : `<p class="desc">${esc(description)}</p>`;
+  }
 
   return `<!doctype html>
 <html lang="ko">
@@ -128,9 +141,9 @@ function renderHtml(meta, type, id) {
 </head>
 <body>
   <img class="logo" src="${esc(image)}" alt="${SITE_NAME}" onerror="this.onerror=null;this.src='${DEFAULT_OG}'" />
-  <span class="badge">${type === 'club' ? '클럽' : '벙'}</span>
+  <span class="badge">${isClub ? '클럽' : '벙'}</span>
   <h1>${esc(title)}</h1>
-  ${description ? `<p class="desc">${esc(description)}</p>` : ''}
+  ${descHtml}
   <p class="status" id="status">앱을 여는 중이에요…</p>
   <div class="stores" id="stores" style="display:none">
     <a class="store" id="play" href="#">Google Play</a>
@@ -142,6 +155,7 @@ function renderHtml(meta, type, id) {
       var PLAY = ${JSON.stringify(PLAY)};
       var APPSTORE = ${JSON.stringify(APPSTORE)};
       var scheme = ${JSON.stringify(scheme)};
+      var webUrl = ${JSON.stringify(webUrl)};
       var ua = navigator.userAgent || '';
       var isAndroid = /android/i.test(ua);
       var isIOS = /iphone|ipad|ipod/i.test(ua) ||
@@ -152,7 +166,11 @@ function renderHtml(meta, type, id) {
       var statusEl = document.getElementById('status');
       function setStatus(t){ if (statusEl) statusEl.textContent = t; }
       if (!scheme) { setStatus('아래에서 Bungl 앱을 설치할 수 있어요.'); return; }
-      if (!isAndroid && !isIOS) { setStatus('모바일에서 열면 Bungl 앱으로 바로 이동해요.'); return; }
+      // 데스크톱/웹 — 설치형 앱 대신 웹앱(app.bungl.org)으로 바로 이동.
+      if (!isAndroid && !isIOS) {
+        if (webUrl) { setStatus('웹에서 여는 중이에요…'); window.location.replace(webUrl); return; }
+        setStatus('모바일에서 열면 Bungl 앱으로 바로 이동해요.'); return;
+      }
       var store = isIOS ? APPSTORE : PLAY;
       var start = Date.now();
       var redirected = false;
